@@ -1,0 +1,6 @@
+Revision history for Perl extension DBIx::Migration::Directories.
+
+0.01  Sat Nov  5 13:07:57 2005
+	- original version; created by h2xs 1.23 with options
+		-AXP -b 5.6.0 DBIx::Migration::Directories
+
