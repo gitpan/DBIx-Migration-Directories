@@ -271,6 +271,30 @@ SQL engine.
 
 =back
 
+=head2 Important note about Schema Files
+
+DBIx::Migration::Directories sends the contents of the schema's files to
+the database engine as a sequence of SQL commands. We consider an "SQL command"
+a sequence of text, delimited by a semicolon (;) at the B<end of a line>.
+
+If you need to supply a string with a semicolon followed by a newline
+to your schema, you can do something like this:
+
+  INSERT INTO foo VALUES (''bar;''||''
+  baz;'));
+
+If you need to create a trigger with well formatted SQL statements in it,
+it's more readable to put an empty comment ( --) after the line that
+ends with a semicolon:
+
+  CREATE OR REPLACE FUNCTION lock_archive () RETURNS TRIGGER LANGUAGE PLPGSQL AS
+  'BEGIN
+    IF OLD.archived THEN
+      RAISE EXCEPTION ''This record has been archived.''; --
+    END IF; --
+      RETURN NEW; --
+   END;';
+
 =head1 METHODS
 
 =head2 Constructor
@@ -367,7 +391,7 @@ Since you need the C<DBIx::Migration::Directories> schema in order to
 revision your schema, it is usually best to use this method to
 install/upgrade your schema.
 
-If you specify any arguemnts, they are passed onto the
+If you specify any arguments, they are passed onto the
 C<DBIx::Migration::Directories> constructor that is used to check on
 it's own schemas. You won't normally need to do this, unless you are
 storing the schemas in a funny location or want a specific
@@ -610,7 +634,7 @@ itself.
 
 =over
 
-=item Mischa Sandberg
+=item Mischa Sandberg <mischa.sandberg@telus.net>
 
 For teaching me a lot about PostgreSQL, and SQL database issues in general.
 Without him I wouldn't have even known I needed a module like this. :-)

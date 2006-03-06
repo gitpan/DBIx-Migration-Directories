@@ -40,7 +40,7 @@ so that they behave properly under MySQL:
 
 =item sql_table_exists($table)
 
-See L<DBIx::Transaction/sql_table_exists>.
+See L<DBIx::Migration::Directories::Base/sql_table_exists>.
 
 MySQL 4.x does not support the SQL standard "C<information_schema>".
 This C<sql_table_exists> method instead uses MySQL's custom
@@ -54,7 +54,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2005 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.

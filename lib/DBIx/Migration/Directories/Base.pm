@@ -457,10 +457,27 @@ This is called by L</version_update_sql>.
 
 =item sql_table_exists($table)
 
-Returns an SQL query used to detect if a table exists. If this query
-returns any rows, it is assumed the named table exists; if there are
-no rows returns, it is assumed the table does not exist.
+Returns a string containing an SQL query that is garunteed to only return
+rows if the named table exists. Base.pm's implementation queries
+the SQL standard C<INFORMATION_SCHEMA> table.
 
 =back
+
+=head1 AUTHOR
+
+Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+
+=head1 LICENSE
+
+Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+
+This is free software; You may distribute it under the same terms as perl
+itself.
+
+=head1 SEE ALSO
+
+L<DBIx::Migration::Directories>
+
+=cut
 
 =cut

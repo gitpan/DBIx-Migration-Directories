@@ -7,8 +7,9 @@ use Carp qw(carp croak);
 use base q(DBIx::Migration::Directories::Base);
 use DBIx::Migration::Directories::ConfigData;
 use File::Basename::Object;
+use version;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our $schema = 'DBIx-Migration-Directories';
 
 return 1;
@@ -52,7 +53,7 @@ sub set_postinit_defaults {
         croak "$self->{dir} is not a directory!";
     }
     
-    if($self->{base} && $self->{schema}) {
+    if($self->{base} && $self->{schema} && !$self->{common_dir}) {
         my $common = join('/', @$self{'base', 'schema'}, '_common');
         if(-d $common) {
             $self->{common_dir} = $common;
@@ -117,7 +118,11 @@ sub detect_package_version {
         }
         
         if(defined ${$vvar}) {
-            return ${$vvar};
+            if(ref(${$vvar}) && ${$vvar}->can('numify')) {
+                return ${$vvar}->numify;
+            } else {
+                return ${$vvar};
+            }
         } else {
             croak qq{package "}, $self->{desired_version_from}, 
                 qq{" did not define \$VERSION};
@@ -162,22 +167,28 @@ sub set_desired_version {
 }
 
 sub migration_map {
-    my($self, $dir) = @_;
-    
-    my @subs = do {
-        opendir(my $dh, $dir) or croak qq{opendir("$dir") failed: $!};
-        grep((!/^\./) && -d("$dir/$_"), readdir($dh));
-    };
+    my($self, @dirs) = @_;
+
+    my @subs;
+    foreach my $dir (grep {$_} @dirs) {
+        my @s = do {
+            opendir(my $dh, $dir) or croak qq{opendir("$dir") failed: $!};
+            grep((!/^\./) && -d("$dir/$_"), readdir($dh));
+        };
+        push(@subs, \@s);
+    }
     
     my %migration_map;
     my %versions;
     
-    foreach my $i (@subs) {
-        my($from, $to) = $self->versions($i);
-        $versions{$self->version_as_number($to)} = $to;
-        if(defined $to) {
-            $migration_map{$from} ||= {};
-            $migration_map{$from}{$to} = $i;
+    foreach my $major (@subs) {
+        foreach my $i (@$major) {
+            my($from, $to) = $self->versions($i);
+            $versions{$self->version_as_number($to)} ||= $to;
+            if(defined $to) {
+                $migration_map{$from} ||= {};
+                $migration_map{$from}{$to} ||= $i;
+            }
         }
     }
     
@@ -189,7 +200,9 @@ sub refresh {
     my $self = shift;
     my $dh;
     
-    my($migration_map, $versions) = $self->migration_map($self->{dir});
+    my($migration_map, $versions) =
+        $self->migration_map(@$self{'dir', 'common_dir'});
+        
     $self->{migrations} = $migration_map;
     $self->{versions} = $versions;
     

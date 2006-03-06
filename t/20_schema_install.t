@@ -32,8 +32,8 @@ my @tests = (
         $sth = $dbh->prepare("SELECT * FROM migration_schema_log");
         $sth->execute();
         $rows = $sth->fetchall_hashref('id');
-        is(scalar keys %$rows, 1, "$driver driver: Row in log table");
-        $row = (values %$rows)[0];
+        is(scalar keys %$rows, 2, "$driver driver: Rows in log table");
+        $row = (values %$rows)[1];
         $sth->finish();
         $dbh->commit;
     },
@@ -45,7 +45,7 @@ my @tests = (
         );
     },
     sub {
-        ok($row->{old_version} == 0, "$driver driver: Correct old version");
+        ok($row->{old_version} == 0.01, "$driver driver: Correct old version");
     },
     sub {
         ok(
@@ -55,11 +55,11 @@ my @tests = (
     },
     sub {
         $log = $migration->schema_version_log;
-        is(scalar @$log, 1, "$driver driver: schema_version_log has one entry for us.");
-        $row = $log->[0];
+        is(scalar @$log, 2, "$driver driver: schema_version_log has two entries for us.");
+        $row = $log->[1];
     },
     sub {
-        ok($row->{old_version} == 0, "$driver driver: Correct old version");
+        ok($row->{old_version} == 0.01, "$driver driver: Correct old version");
     },
     sub {
         ok(
@@ -74,6 +74,7 @@ my @tests = (
         ok(
             !$migration->full_migrate(
                 current_version => 0,
+                common_dir      =>  "schema/_common",
                 dir             =>  "schema/$driver",
                 desired_version => $DBIx::Migration::Directories::VERSION
 
@@ -198,6 +199,7 @@ sub run_tests {
         $migration = DBIx::Migration::Directories->new(
             dbh                     =>  $dbh,
             dir                     =>  "schema/$driver",
+            common_dir              =>  "schema/_common",
             schema                  =>  'DBIx-Migration-Directories',
             desired_version_from    =>  'DBIx::Migration::Directories',
         );

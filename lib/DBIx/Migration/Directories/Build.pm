@@ -66,34 +66,34 @@ DBIx::Migration::Directories::Build - Build a package that includes a migration 
 
 =head1 SYNOPSIS
 
-  eval {
-      require DBIx::Migration::Directories::Build;
-  };
-
-  if($@) {
-      my $build = Module::Build->new(
-          module_name         =>  'My::Module',
-          license             =>  'perl',
-          requires            =>  {
-              'DBIx::Migration::Directories'  =>  '0.01',
-          },
-          create_makefile_pl  =>  'passthrough',
-      );
-      die "Can't proceed without DBIx::Migration::Directories!";
-  }
-
-  my $build = DBIx::Migration::Directories::Build->new(
-      module_name     =>  'My::Module',
-      license         =>  'perl',
-      create_makefile_pl  =>  'passthrough',
-      requires        =>  {
+  our %opts = (
+      module_name         =>  'Schema::RDBMS::MySchema',
+      license             =>  'perl',
+      requires            =>  {
           'DBIx::Migration::Directories'  =>  '0.01',
-          'perl'                          =>  '5.6.1',
+          'DBIx::Transaction'             =>  '0.005',
       },
-      schema_name     =>  'My-Module-Database',
-      ...
+      build_requires      =>  {
+        'Module::Build'                 =>  '0.27_03',
+        'Test::Exception'               =>  '0.21',
+      },
+      create_makefile_pl  =>  'passthrough',
   );
 
+  eval { require DBIx::Migration::Directories::Build; };
+
+  my $build;
+
+  if($@) {
+      warn "DBIx::Migration::Directories::Build is required to build this module!";
+      # they don't have the build class, so the install won't work anyways.
+      # set installdirs to an empty hash to ensure that the "install" action
+      # can't run successfully.
+      $build = Module::Build->new(%opts, installdirs => {});
+  } else {
+      $build = DBIx::Migration::Directories::Build->new(%opts);
+  }
+  
   $build->create_build_script;
 
 =head1 DESCRIPTION
@@ -141,7 +141,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2005 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.

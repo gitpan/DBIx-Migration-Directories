@@ -16,7 +16,10 @@ my @tests = (
     },
     sub {
         ok(
-            $migration->full_migrate(dir => "schema/$driver"),
+            $migration->full_migrate(
+                dir             => "schema/$driver",
+                common_dir      =>  "schema/_common",
+            ),
             'Install latest schema'
         ),
     },
@@ -76,7 +79,9 @@ my @tests = (
     },
     sub {
         ok(
-            $migration->full_migrate(dir => "schema/$driver"),
+            $migration->full_migrate(
+                dir => "schema/$driver", common_dir => "schema/_common"
+            ),
             'Do a full migrate from 1'
         );
     },
@@ -85,13 +90,18 @@ my @tests = (
     },
     sub {
         ok(
-            $migration2->full_migrate(dir => "schema/$driver"),
+            $migration2->full_migrate(
+                dir => "schema/$driver",
+                common_dir => "schema/_common"
+            ),
             'Migrate in second schema'
         );
     },
     sub {
         ok(
-            $migration->full_delete_schema(dir => "schema/$driver"),
+            $migration->full_delete_schema(
+                dir => "schema/$driver", common_dir => "schema/_common"
+            ),
             'Schema removed'
         );
     },
@@ -108,7 +118,10 @@ my @tests = (
     },
     sub {
         ok(
-            $migration2->full_delete_schema(dir => "schema/$driver"),
+            $migration2->full_delete_schema(
+                dir             => "schema/$driver",
+                common_dir      => "schema/_common"
+            ),
             'Second schema removed OK'
         );
     },

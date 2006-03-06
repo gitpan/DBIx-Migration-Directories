@@ -1,6 +1,6 @@
 ---
 name: DBIx-Migration-Directories
-version: 0.01
+version: 0.02
 author:
   - 'Tyler "Crackerjack" MacDonald <japh@crackerjack.net>'
 abstract: Install/remove/upgrade/downgrade SQL schemas
@@ -13,13 +13,14 @@ requires:
   DBIx::Transaction: 0.005
   File::Basename::Object: 0.01
   Pod::Usage: 1
+  version: 0.54
 build_requires:
   Data::Dumper: 2.10
   Module::Build: 0.27_03
 provides:
   DBIx::Migration::Directories:
     file: lib/DBIx/Migration/Directories.pm
-    version: 0.01
+    version: 0.02
   DBIx::Migration::Directories::Base:
     file: lib/DBIx/Migration/Directories/Base.pm
   DBIx::Migration::Directories::Base::SQLite2:

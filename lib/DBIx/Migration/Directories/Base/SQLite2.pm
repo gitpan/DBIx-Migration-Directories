@@ -57,7 +57,7 @@ so that they behave properly under SQLite2:
 
 =item sql_table_exists($table)
 
-See L<DBIx::Transaction/sql_table_exists>.
+See L<DBIx::Migration::Directories::Base/sql_table_exists>.
 
 SQLite2 does not support the SQL standard "C<information_schema>".
 This C<sql_table_exists> method instead uses SQLite2's custom
@@ -65,7 +65,7 @@ This C<sql_table_exists> method instead uses SQLite2's custom
 
 =item sql_insert_migration_schema_log()
 
-See L<DBIx::Transaction/sql_insert_migration_schema_log>.
+See L<DBIx::Migration::Directories::Base/sql_insert_migration_schema_log>.
 
 SQLite2 does not supply a now() function to retrieve the current time,
 so this query has been modified to compensate.
@@ -78,7 +78,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2005 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.
