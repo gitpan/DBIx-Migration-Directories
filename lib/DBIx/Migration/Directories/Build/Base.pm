@@ -21,7 +21,10 @@ sub default_install_dir {
         $install_dir = $to;
     } else {
         my $propt = ($type eq 'core') ? 'prefix' : "${type}prefix";
-        my $dir = $self->{config}->{$propt} || $self->{config}->{siteprefix};
+        my $dir =
+            $self->{properties}->{install_base} ||
+            $self->{config}->{$propt} ||
+            $self->{config}->{siteprefix};
         $install_dir = File::Spec->catdir($dir, $to);
     }
     
