@@ -87,7 +87,7 @@ $mh = DBIx::Migration::Directories->new(
 );
 
 is(
-    $mh->desired_version, $DBIx::Migration::Directories::VERSION, 
+    $mh->desired_version, $DBIx::Migration::Directories::SCHEMA_VERSION, 
     'desired_version_from - Good package'
 );
 

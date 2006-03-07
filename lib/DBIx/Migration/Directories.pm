@@ -7,9 +7,9 @@ use Carp qw(carp croak);
 use base q(DBIx::Migration::Directories::Base);
 use DBIx::Migration::Directories::ConfigData;
 use File::Basename::Object;
-use version;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
+our $SCHEMA_VERSION = '0.02';
 our $schema = 'DBIx-Migration-Directories';
 
 return 1;
@@ -107,8 +107,9 @@ sub detect_package_version {
     if($self->{desired_version_from}) {
         no strict 'refs';
 
+        my $svar = join('::', $self->{desired_version_from}, 'SCHEMA_VERSION');
         my $vvar = join('::', $self->{desired_version_from}, 'VERSION');
-        
+
         if(!defined(${$vvar})) {
             eval qq{require $self->{desired_version_from};};
         
@@ -117,7 +118,13 @@ sub detect_package_version {
             }
         }
         
-        if(defined ${$vvar}) {
+        if(defined ${$svar}) {
+            if(ref(${$svar}) && ${$svar}->can('numify')) {
+                return ${$svar}->numify;
+            } else {
+                return ${$svar};
+            }
+        } elsif(defined ${$vvar}) {
             if(ref(${$vvar}) && ${$vvar}->can('numify')) {
                 return ${$vvar}->numify;
             } else {

@@ -1,5 +1,11 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.03  Tue Mar  7 12:00:00 2006
+        - Fixed the "install_path" thing added yesterday.
+        - Support $SCHEMA_VERSION global variable so that
+          you can still use desired_version_from without binding your
+          schema version -directly- to a perl package version.
+
 0.02  Mon Mar  6 13:14:00 2006
         - Documentation improvements.
         - Disabled 02_Build_PL.t until it's improved

@@ -342,10 +342,11 @@ C<0.0001> is allowed, but C<0.0.1> is not.)
 =item desired_version_from
 
 If C<desired_version> is not specified, C<DBIx::Migration::Directories>
-will attempt to load the package named in C<desired_version_from>, and
-use it's version number (specified by it's C<$VERSION> global variable)
-as the version number we wish to migrate to. This can be a handy way to keep
-your schema versions in sync with your package versions.
+will attempt to load the package named in C<desired_version_from>.
+If successful, the desired version will be set to the value of that package's
+C<$SCHEMA_VERSION> global variable, or it's C<$VERSION> global variable if
+C<$SCHEMA_VERSION> was not specified. This can make it easier for your
+package to specify what version of the schema it's API supports.
 
 =item driver
 

@@ -22,7 +22,7 @@ my @tests = (
     },
     sub {
         ok(
-            $rows->[0]->[1] == $DBIx::Migration::Directories::VERSION,
+            $rows->[0]->[1] == $DBIx::Migration::Directories::SCHEMA_VERSION,
             "$driver driver: Correct version"
         );
         $dbh->commit;
@@ -49,7 +49,7 @@ my @tests = (
     },
     sub {
         ok(
-            $row->{new_version} == $DBIx::Migration::Directories::VERSION,
+            $row->{new_version} == $DBIx::Migration::Directories::SCHEMA_VERSION,
             "$driver driver: Correct new version"
         );
     },
@@ -63,7 +63,7 @@ my @tests = (
     },
     sub {
         ok(
-            $row->{new_version} == $DBIx::Migration::Directories::VERSION,
+            $row->{new_version} == $DBIx::Migration::Directories::SCHEMA_VERSION,
             "$driver driver: Correct new version"
         );
     },
@@ -76,7 +76,7 @@ my @tests = (
                 current_version => 0,
                 common_dir      =>  "schema/_common",
                 dir             =>  "schema/$driver",
-                desired_version => $DBIx::Migration::Directories::VERSION
+                desired_version => $DBIx::Migration::Directories::SCHEMA_VERSION
 
             ),
             "Can't migrate already migrated schema"
@@ -86,14 +86,14 @@ my @tests = (
     sub {
         is(
             $migration->get_current_version + 0,
-            $DBIx::Migration::Directories::VERSION + 0,
+            $DBIx::Migration::Directories::SCHEMA_VERSION + 0,
             "$driver driver: We agree with current version number"
         );
     },
     sub {
         is(
             $migration->set_desired_version + 0,
-            $DBIx::Migration::Directories::VERSION + 0,
+            $DBIx::Migration::Directories::SCHEMA_VERSION + 0,
             "$driver driver: We are at the best version number"
         );
     },
@@ -119,14 +119,14 @@ my @tests = (
     sub {
         is(
             $migration->get_current_version + 0,
-            $DBIx::Migration::Directories::VERSION + 0,
+            $DBIx::Migration::Directories::SCHEMA_VERSION + 0,
             "$driver driver: We agree with current version number"
         );
     },
     sub {
         is(
             $migration->set_desired_version + 0,
-            $DBIx::Migration::Directories::VERSION + 0,
+            $DBIx::Migration::Directories::SCHEMA_VERSION + 0,
             "$driver driver: We are at the best version number"
         );
     },

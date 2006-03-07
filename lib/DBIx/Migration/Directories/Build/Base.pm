@@ -40,7 +40,7 @@ sub add_install_dir {
     
     $self->{config}->{build_dirs} ||= [];
     push(@{$self->{config}->{build_dirs}}, $from);
-    $self->{install_path}->{$from} = $to;
+    $self->{properties}{install_path}->{$from} = $to;
     
     return $to;
 }
