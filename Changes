@@ -1,10 +1,7 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
-0.04  Tue Mar 7  14:00:00 2006
+0.05  Wed Mar 8  08:45:00 2006
         - "Hopefully the last release this week"
-        - Obey Module::Build's install_base property.
-
-0.03  Tue Mar  7 12:00:00 2006
         - Fixed the "install_path" thing added yesterday.
         - Support $SCHEMA_VERSION global variable so that
           you can still use desired_version_from without binding your
@@ -16,4 +13,4 @@ Revision history for Perl extension DBIx::Migration::Directories.
         - Updated to use new Module::Build "install_path" options
 
 0.01  Tue Feb 14 13:07:57 2006
-	- Initial public release, started on Nov.28th, 2005.
+        - Initial public release, started on Nov.28th, 2005.

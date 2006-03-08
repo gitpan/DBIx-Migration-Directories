@@ -15,7 +15,6 @@ my $build = DBIx::Migration::Directories::Build->new(
         'DBI'                       => '1.41',
         'Class::Driver'             => '0.003',
         'File::Basename::Object'    => '0.01',
-        'version'                   => '0.54',
     },
     build_requires      => {
         'Data::Dumper'      => '2.10',
