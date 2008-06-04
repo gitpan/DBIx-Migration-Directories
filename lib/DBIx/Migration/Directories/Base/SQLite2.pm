@@ -4,7 +4,7 @@ package DBIx::Migration::Directories::Base::SQLite2;
 
 use strict;
 use warnings;
-use base q(DBIx::Migration::Directories::Base);
+use base q(DBIx::Migration::Directories);
 use POSIX qw(strftime);
 
 return 1;

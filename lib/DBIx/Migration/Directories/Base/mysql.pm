@@ -4,7 +4,7 @@ package DBIx::Migration::Directories::Base::mysql;
 
 use strict;
 use warnings;
-use base q(DBIx::Migration::Directories::Base);
+use base q(DBIx::Migration::Directories);
 
 return 1;
 

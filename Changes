@@ -1,5 +1,8 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.06  Tue Jun 3  22:04:00 2008
+        - Removed need for Class::Clone, since it doesn't work with perl 5.10.
+
 0.05  Wed Mar 8  08:45:00 2006
         - "Hopefully the last release this week"
         - Fixed the "install_path" thing added yesterday.

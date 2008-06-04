@@ -8,7 +8,7 @@ use base q(DBIx::Migration::Directories::Base);
 use DBIx::Migration::Directories::ConfigData;
 use File::Basename::Object;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 our $SCHEMA_VERSION = '0.02';
 our $schema = 'DBIx-Migration-Directories';
 

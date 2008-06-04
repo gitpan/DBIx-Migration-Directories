@@ -5,16 +5,26 @@ package DBIx::Migration::Directories::Base;
 use strict;
 use warnings;
 use Carp qw(croak);
-use Class::Driver;
-use base q(Class::Driver);
 
 our $number = qr{[0-9]+(?:\.[0-9]+)?};
 
 return 1;
 
-sub driver_required { 0; }
-
-sub driver_required_here { 0; }
+sub driver_load {
+  my($class, $driver, %args) = @_;
+  my $pkg = __PACKAGE__ . "::$driver";
+  eval "use $pkg;";
+  if($@) {
+    my $err = $@;
+    if($err =~ m{Can\'t locate}) {
+      return $class->driver_new(%args);
+    } else {
+      die $err;
+    }
+  } else {
+    return $pkg->driver_new(%args);
+  }
+}
 
 sub new {
     my($class, %args) = @_;

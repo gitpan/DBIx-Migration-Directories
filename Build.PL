@@ -13,7 +13,6 @@ my $build = DBIx::Migration::Directories::Build->new(
         'DBIx::Transaction'         => '0.005',
         'Pod::Usage'                => '1',
         'DBI'                       => '1.41',
-        'Class::Driver'             => '0.003',
         'File::Basename::Object'    => '0.01',
     },
     build_requires      => {
