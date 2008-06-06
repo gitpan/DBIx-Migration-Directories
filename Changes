@@ -1,5 +1,10 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.07  Thu Jun 5  11:56:00 2008
+        - Moved database-dependant operations into their own class.
+        - Updated build process to work with the latest and greatest
+          Module::Build
+
 0.06  Tue Jun 3  22:04:00 2008
         - Removed need for Class::Clone, since it doesn't work with perl 5.10.
 

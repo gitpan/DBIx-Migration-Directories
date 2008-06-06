@@ -21,7 +21,7 @@ ok(
     'Create an object'
 );
 
-is($mh->{driver}, 'dummy', 'auto-vivify driver name');
+is($mh->db->driver, 'dummy', 'auto-vivify driver name');
 ok($mh->{base}, 'auto-vivify base directory');
 is($mh->desired_version, 4, 'auto-vivify desired_version');
 
@@ -77,6 +77,8 @@ like(
     qr{require Test::DummyDBI::NoSuchPackage failed},
     "desired_version_from - Bogus package"
 );
+
+diag("Schema version is $DBIx::Migration::Directories::SCHEMA_VERSION");
 
 $mh = DBIx::Migration::Directories->new(
     dbh                     => $dbh,

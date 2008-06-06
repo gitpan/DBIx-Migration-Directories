@@ -4,10 +4,12 @@ Changes
 lib/DBIx/Migration/Directories.pm
 lib/DBIx/Migration/Directories.pod
 lib/DBIx/Migration/Directories/Base.pm
-lib/DBIx/Migration/Directories/Base/mysql.pm
-lib/DBIx/Migration/Directories/Base/SQLite2.pm
 lib/DBIx/Migration/Directories/Build.pm
 lib/DBIx/Migration/Directories/Build/Base.pm
+lib/DBIx/Migration/Directories/Database.pm
+lib/DBIx/Migration/Directories/Database.pod
+lib/DBIx/Migration/Directories/Database/mysql.pm
+lib/DBIx/Migration/Directories/Database/SQLite2.pm
 lib/DBIx/Migration/Directories/Test.pm
 Makefile.PL
 MANIFEST

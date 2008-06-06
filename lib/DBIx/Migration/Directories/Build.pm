@@ -27,6 +27,7 @@ sub new {
             'schema_dir'
         );
     };
+
     
     if($@ || !$schema_dir) {
         $schema_dir = $self->default_install_dir(
@@ -52,7 +53,7 @@ sub new {
     if(-d "schemas") {
         $self->add_install_dir("schemas", $schema_dir);
     }
-    
+
     return $self;
 }
 

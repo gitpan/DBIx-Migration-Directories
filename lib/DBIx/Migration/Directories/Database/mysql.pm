@@ -1,10 +1,11 @@
 #!perl
 
-package DBIx::Migration::Directories::Base::mysql;
+package DBIx::Migration::Directories::Database::mysql;
 
 use strict;
 use warnings;
-use base q(DBIx::Migration::Directories);
+use DBIx::Migration::Directories::Database;
+use base q(DBIx::Migration::Directories::Database);
 
 return 1;
 
@@ -19,7 +20,7 @@ sub sql_table_exists {
 
 =head1 NAME
 
-DBIx::Migration::Directories::mysql - Handle quirks with DBD::mysql
+DBIx::Migration::Directories::Database::mysql - Handle quirks with DBD::mysql
 
 =head1 SYNOPSIS
 
@@ -54,7 +55,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2008 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.

@@ -24,7 +24,9 @@ sub default_install_dir {
         my $dir =
             $self->{properties}->{install_base} ||
             $self->{config}->{$propt} ||
-            $self->{config}->{siteprefix};
+            $self->{config}->{siteprefix} ||
+            $self->{properties}->{original_prefix}->{$type};
+
         $install_dir = File::Spec->catdir($dir, $to);
     }
     
@@ -41,8 +43,8 @@ sub add_install_dir {
         $self->{properties}{install_sets}{$type}{$from} = $install_dir;
     }
     
-    $self->{config}->{build_dirs} ||= [];
-    push(@{$self->{config}->{build_dirs}}, $from);
+    $self->{properties}->{build_dirs} ||= [];
+    push(@{$self->{properties}->{build_dirs}}, $from);
     
     $self->{properties}{install_path}->{$from} ||=
         $self->default_install_dir("site", $from, $to);
@@ -54,7 +56,7 @@ sub process_files_by_dir {
     my($self, $dir) = @_;
     my $blib = File::Spec->catdir($self->blib, $dir);
     File::Path::mkpath($blib);
-    my $dir_files = $self->rscan_dir($dir, sub { -f($_) && !m{/CVS/}});
+    my $dir_files = $self->rscan_dir($dir, sub { -f($_) && !m{/CVS|\.svn/}});
     foreach my $i (@$dir_files) {
         $self->copy_if_modified(
             from    => $i,
@@ -65,7 +67,7 @@ sub process_files_by_dir {
 
 sub build_dirs {
     my $self = shift;
-    my $dirs = $self->{config}->{build_dirs} || [];
+    my $dirs = $self->{properties}->{build_dirs} || [];
 
     foreach my $dir (@$dirs) {
         $self->process_files_by_dir($dir);

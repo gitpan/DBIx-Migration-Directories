@@ -626,7 +626,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2008 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.
@@ -650,9 +650,9 @@ sane to maintain.
 For L<Devel::Cover|Devel::Cover>, which makes it easy for me to know when I can say
 "It really works!"
 
-=item Shawna Hood
+=item Sedara MacDonald
 
-My wife, for putting up with me while I coded this!
+My daughter, for bringing me cookies while I coded this!
 
 =back
 

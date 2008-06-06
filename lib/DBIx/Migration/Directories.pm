@@ -4,11 +4,12 @@ use 5.006;
 use strict;
 use warnings;
 use Carp qw(carp croak);
+use DBIx::Migration::Directories::Base;
 use base q(DBIx::Migration::Directories::Base);
 use DBIx::Migration::Directories::ConfigData;
 use File::Basename::Object;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 our $SCHEMA_VERSION = '0.02';
 our $schema = 'DBIx-Migration-Directories';
 
@@ -69,26 +70,25 @@ sub set_postinit_defaults {
 }
 
 sub detect_dir {
-    my $self = shift;
-    if($self->{schema} && $self->{base}) {
-        my $dir = join('/', @$self{'schema_dir', 'driver'});
+  my $self = shift;
+  if($self->{schema} && $self->{base}) {
+    my $dir = join('/', $self->{schema_dir}, $self->db->driver);
 
-        # if a driver-specific schema isn't available, but a _generic schema
-        # is, use that instead. however, if _generic isn't available either,
-        # we want to fail out on the original driver directory name.
+    # if a driver-specific schema isn't available, but a _generic schema
+    # is, use that instead. however, if _generic isn't available either,
+    # we want to fail out on the original driver directory name.
 
-        if(!-d $dir) {
-            my $generic_dir = join('/', $self->{schema_dir}, '_generic');
-            if(-d $generic_dir) {
-                $dir = $generic_dir;
-            }
-        }
-    
-        return $dir;
-    } else {
-        return;
+    if(!-d $dir) {
+      my $generic_dir = join('/', $self->{schema_dir}, '_generic');
+      if(-d $generic_dir) {
+        $dir = $generic_dir;
+      }
     }
     
+    return $dir;
+  } else {
+    return;
+  } 
 }
 
 sub desired_version {
@@ -327,16 +327,16 @@ sub version_update_sql {
     
     if($ins) {
         push(@sql,
-            $self->sql_insert_migration_schema_version($self->{schema}, $to)
+            $self->db->sql_insert_migration_schema_version($self->{schema}, $to)
         );
     } else {
         push(@sql,
-            $self->sql_update_migration_schema_version($self->{schema}, $to)
+            $self->db->sql_update_migration_schema_version($self->{schema}, $to)
         );
     }
     
     push(@sql,
-        $self->sql_insert_migration_schema_log($self->{schema}, $from, $to)
+        $self->db->sql_insert_migration_schema_log($self->{schema}, $from, $to)
     );
         
     return @sql;
@@ -358,40 +358,6 @@ sub dir_migration_sql {
     }
             
     return @sql;
-}
-
-sub get_current_version {
-    my $self = shift;
-    
-    my $dbh = $self->{dbh};
-    if($self->table_exists('migration_schema_version')) {
-        $dbh->begin_work;
-        my $sth = $dbh->prepare(
-            "SELECT version FROM migration_schema_version WHERE name = ?"
-        );
-        if($sth->execute($self->{schema})) {
-            if(my $row = $sth->fetchrow_arrayref()) {
-                $self->{current_version} = $row->[0];
-            } else {
-                delete $self->{current_version};
-            }
-            $sth->finish();
-            if($dbh->transaction_error) {
-                $dbh->rollback();
-            } else {
-                $dbh->commit();
-            }
-        } else {
-            my $err = $dbh->errstr;
-            delete $self->{current_version};
-            $dbh->rollback();
-            croak "querying migration version table failed: $err";
-        }
-    } else {
-        delete $self->{current_version};
-    }
-    
-    return $self->{current_version};
 }
 
 sub migration_path_sql {
@@ -474,34 +440,6 @@ sub full_migrate {
     }
 }
 
-sub delete_schema_record {
-    my $self = shift;
-    my $dbh = $self->{dbh};
-    
-    $dbh->begin_work;
-
-    my $sth = $dbh->prepare_cached(
-        q{DELETE FROM migration_schema_log WHERE schema_name = ?}
-    );
-    
-    if($sth->execute($self->{schema})) {
-        $sth->finish;
-        $sth = $dbh->prepare_cached(
-            q{DELETE FROM migration_schema_version WHERE name = ?}
-        );
-        if($sth->execute($self->{schema})) {
-            $sth->finish;
-            $dbh->commit;
-            return 1;
-        } else {
-            $dbh->rollback;
-            return 0;
-        }
-    } else {
-        $dbh->rollback;
-        return 0;
-    }
-}
 
 sub delete_schema {
     my $self = shift;
@@ -580,3 +518,27 @@ sub full_delete_schema {
         }
     }
 }
+
+sub delete_schema_record {
+  my $self = shift;
+  return $self->db->db_delete_schema_record($self->{schema});
+}
+
+sub get_current_version {
+  my $self = shift;
+  my $version;
+
+  eval { $version = $self->db->db_get_current_version($self->{schema}); };
+
+  if($@) {
+    delete $self->{current_version};
+    die $@;
+  } elsif(!defined $version) {
+    delete $self->{current_version};
+    return;
+  } else {
+    $self->{current_version} = $version;
+    return $version;
+  }
+}
+

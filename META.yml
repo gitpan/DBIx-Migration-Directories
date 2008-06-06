@@ -1,6 +1,6 @@
 ---
 name: DBIx-Migration-Directories
-version: 0.06
+version: 0.07
 author:
   - 'Tyler "Crackerjack" MacDonald <japh@crackerjack.net>'
 abstract: Install/remove/upgrade/downgrade SQL schemas
@@ -20,17 +20,19 @@ meta-spec:
 provides:
   DBIx::Migration::Directories:
     file: lib/DBIx/Migration/Directories.pm
-    version: 0.06
+    version: 0.07
   DBIx::Migration::Directories::Base:
     file: lib/DBIx/Migration/Directories/Base.pm
-  DBIx::Migration::Directories::Base::SQLite2:
-    file: lib/DBIx/Migration/Directories/Base/SQLite2.pm
-  DBIx::Migration::Directories::Base::mysql:
-    file: lib/DBIx/Migration/Directories/Base/mysql.pm
   DBIx::Migration::Directories::Build:
     file: lib/DBIx/Migration/Directories/Build.pm
   DBIx::Migration::Directories::Build::Base:
     file: lib/DBIx/Migration/Directories/Build/Base.pm
+  DBIx::Migration::Directories::Database:
+    file: lib/DBIx/Migration/Directories/Database.pm
+  DBIx::Migration::Directories::Database::SQLite2:
+    file: lib/DBIx/Migration/Directories/Database/SQLite2.pm
+  DBIx::Migration::Directories::Database::mysql:
+    file: lib/DBIx/Migration/Directories/Database/mysql.pm
   DBIx::Migration::Directories::Test:
     file: lib/DBIx/Migration/Directories/Test.pm
 resources:

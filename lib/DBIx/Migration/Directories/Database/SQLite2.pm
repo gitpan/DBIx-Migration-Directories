@@ -1,10 +1,11 @@
 #!perl
 
-package DBIx::Migration::Directories::Base::SQLite2;
+package DBIx::Migration::Directories::Database::SQLite2;
 
 use strict;
 use warnings;
-use base q(DBIx::Migration::Directories);
+use DBIx::Migration::Directories::Database;
+use base q(DBIx::Migration::Directories::Database);
 use POSIX qw(strftime);
 
 return 1;
@@ -36,7 +37,7 @@ sub sql_insert_migration_schema_log {
 
 =head1 NAME
 
-DBIx::Migration::Directories::SQLite2 - Handle quirks with DBD::SQLite2
+DBIx::Migration::Directories::Database::SQLite2 - Handle quirks with DBD::SQLite2
 
 =head1 SYNOPSIS
 
@@ -78,7 +79,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2008 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.

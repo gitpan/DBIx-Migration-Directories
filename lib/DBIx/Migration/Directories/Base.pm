@@ -5,57 +5,46 @@ package DBIx::Migration::Directories::Base;
 use strict;
 use warnings;
 use Carp qw(croak);
+use DBIx::Migration::Directories::Database;
 
 our $number = qr{[0-9]+(?:\.[0-9]+)?};
 
 return 1;
 
-sub driver_load {
-  my($class, $driver, %args) = @_;
-  my $pkg = __PACKAGE__ . "::$driver";
-  eval "use $pkg;";
-  if($@) {
-    my $err = $@;
-    if($err =~ m{Can\'t locate}) {
-      return $class->driver_new(%args);
-    } else {
-      die $err;
-    }
+sub new {
+  my($class, %args) = @_;
+  ($class, %args) = ($class->set_preinit_defaults(%args));
+  if(ref($class)) {
+    $class = ref($class);
+  }
+  if(my $self = $class->driver_new(%args)) {
+    $self->set_postinit_defaults();
+    return $self;
   } else {
-    return $pkg->driver_new(%args);
+    return;
   }
 }
 
-sub new {
-    my($class, %args) = @_;
-    ($class, %args) = ($class->set_preinit_defaults(%args));
-    if(my $self = $class->driver_load($args{driver}, %args)) {
-        $self->set_postinit_defaults();
-        return $self;
-    } else {
-        return;
-    }
+sub set_preinit_defaults {
+  return(@_);
 }
 
-sub set_postinit_defaults {}
+sub set_postinit_defaults {
+  my $self = shift;
+  my $db = DBIx::Migration::Directories::Database->new(dbh => $self->{dbh});
+  $self->{db} = $db;
+  return $self;
+}
 
-sub set_preinit_defaults {
-    my($class, %args) = @_;
-    $class = ref($class) if ref($class);
-    
-    croak qq{$class\->new\() requires "dbh" parameter}
-        unless defined $args{dbh};
-
-    $args{driver} = $args{dbh}->{Driver}->{Name}
-        unless($args{driver});
-        
-    return($class, %args);
+sub db {
+  my $self = shift;
+  return $self->{db};
 }
 
 sub driver_new {
-    my($class, %args) = @_;
-    my $self = bless \%args, $class;
-    return $self;
+  my($class, %args) = @_;
+  my $self = bless \%args, $class;
+  return $self;
 }
 
 sub read_file {
@@ -124,146 +113,6 @@ sub run_sql {
     });
 }
 
-sub sql_insert_migration_schema_version {
-    my($self, $myschema, $to) = @_;
-    return sprintf(
-        q{INSERT INTO migration_schema_version (name, version) VALUES (%s, %f)},
-        $self->{dbh}->quote($myschema), $to
-    );
-}
-
-sub sql_update_migration_schema_version {
-    my($self, $myschema, $to) = @_;
-    return sprintf(
-        q{UPDATE migration_schema_version SET version = %f WHERE name = %s},
-        $to, $self->{dbh}->quote($myschema)
-    )
-}
-
-sub sql_insert_migration_schema_log {
-    my($self, $myschema, $from, $to) = @_;
-    return sprintf(
-        q{
-            INSERT INTO migration_schema_log 
-                (schema_name, event_time, old_version, new_version)
-            VALUES (%s, now(), %f, %f)
-        },
-        $self->{dbh}->quote($myschema), $from, $to
-    );
-}
-
-sub sql_table_exists {
-    my($self, $table) = @_;
-    return sprintf(
-        q{SELECT 1 FROM information_schema.tables WHERE table_name = %s},
-        $self->{dbh}->quote($table)
-    );
-}
-
-sub table_exists {
-    my($self, $table) = @_;
-    
-    my $dbh = $self->{dbh};
-    my $rv;
-    $dbh->begin_work;
-    my $query = $self->sql_table_exists($table);
-    my $sth = $dbh->prepare($query);
-    if($sth->execute()) {
-        if($sth->fetchrow_arrayref()) {
-            $rv = 1;
-        } else {
-            $rv = 0;
-        }
-        $sth->finish();
-        if($dbh->transaction_error) {
-            $dbh->rollback();
-        } else {
-            $dbh->commit();
-        }
-    } else {
-        my $err = $dbh->errstr;
-        $dbh->rollback();
-        warn "table_exists query $query failed: $err";
-        $rv = undef;
-    }
-    return $rv;
-}
-
-sub schema_version_log {
-    my $self = shift;
-    my $myschema = shift || $self->{schema} ||
-        croak "schema_version_log() called without a schema name";
-
-    my $dbh = $self->{dbh};
-    $dbh->begin_work;
-    if($self->table_exists('migration_schema_log')) {
-        if(my $sth = $dbh->prepare_cached(q{
-            SELECT
-                schema_name, event_time, old_version, new_version
-            FROM
-                migration_schema_log
-            WHERE
-                schema_name = ?
-            ORDER BY
-                id
-        })) {
-            if($sth->execute($myschema)) {
-                if(my $result = $sth->fetchall_arrayref({})) {
-                    $sth->finish();
-                    $dbh->commit();
-                    return $result;
-                } else {
-                    $sth->finish();
-                    $dbh->rollback();
-                    return;
-                }
-            }
-        } else {
-            my $err = $dbh->errstr;
-            $dbh->rollback();
-            croak "query for versions of $myschema failed: ", $err;
-        }
-    } else {
-        $dbh->commit();
-        return;
-    }
-}
-
-sub schemas {
-    my $self = shift;
-    my $dbh = $self->{dbh};
-    $dbh->begin_work;
-    if($self->table_exists('migration_schema_version')) {
-        if(my $sth = $dbh->prepare_cached(
-            "SELECT * FROM migration_schema_version"
-        )) {
-            if($sth->execute()) {
-                if(my $result = $sth->fetchall_hashref('name')) {
-                    $sth->finish;
-                    $dbh->commit;
-                    return $result;
-                } else {
-                    $sth->finish;
-                    $dbh->rollback;
-                    return;
-                }
-            
-            } else {
-                my $err = $dbh->errstr;
-                $dbh->rollback;
-                croak "Failed to run query to obtain schemas: $err";
-            }
-        } else {
-            my $err = $dbh->errstr;
-            $dbh->rollback;
-            croak "Failed to prepare query to obtain schemas: $err";
-        }
-    } else {
-        $dbh->commit;
-        return;
-    }
-}
-
 sub require_schema {
     my($self, $schema, $version) = @_;
     my $schemas = $self->schemas;
@@ -275,6 +124,19 @@ sub require_schema {
     }
     return 1;
 }
+
+sub schemas {
+  my $self = shift;
+  return $self->db->db_schemas;
+}
+
+sub schema_version_log {
+  my $self = shift;
+  my $myschema = shift || $self->{schema} ||
+    croak "schema_version_log() called without a schema name";
+  return $self->db->db_schema_version_log($myschema);
+}
+
 
 __END__
 
@@ -326,12 +188,6 @@ used by C<DBIx::Migration::Directories::Base>:
 
 B<Required.> The C<DBIx::Transaction> database handle to use for queries.
 This handle should already be connected to the database that you wish to manage.
-
-=item driver
-
-The name of the DBD driver we are using. You normally don't want to
-specify this option; C<DBIx::Migration::Directories::Base> will automatically
-pull the driver name out of the database handle you pass along.
 
 =item schema
 
@@ -406,10 +262,6 @@ Schema version after this migration took place.
 
 =over
 
-=item table_exists($table)
-
-Queries the database and returns 1 if the named table exists, 0 otherwise.
-
 =item direction($from, $to)
 
 Given two version numbers, determine whether this is an upgrade or a
@@ -448,29 +300,6 @@ Normalize a version number. Currently, this is just equivalent to:
 But in future releases it may do fancier stuff, like dealing with "double-dot"
 version numbers or the like.
 
-=item sql_insert_migration_schema_version($schema, $version)
-
-Returns an SQL query used to add a new schema to the database.
-This is called by L</version_update_sql>.
-
-=item sql_update_migration_schema_version($schema, $version)
-
-Returns an SQL query used to change the version number we have
-on record for a schema.
-This is called by L</version_update_sql>.
-
-=item sql_insert_migration_schema_log($schema, $from, $to)
-
-Returns an SQL query used to add a new schema log record to the database
-indicating a migration between schema versions.
-This is called by L</version_update_sql>.
-
-=item sql_table_exists($table)
-
-Returns a string containing an SQL query that is garunteed to only return
-rows if the named table exists. Base.pm's implementation queries
-the SQL standard C<INFORMATION_SCHEMA> table.
-
 =back
 
 =head1 AUTHOR
@@ -479,7 +308,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2008 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.
