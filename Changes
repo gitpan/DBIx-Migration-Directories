@@ -1,5 +1,12 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.08  Tue Nov 18 11:17:00 2008
+        - Got rid of "id" column in the migration_schema_log
+          This means that the log no longer has a primary id -- this also
+          means that MySQL can replicate migrations properly.
+          Since SQLite 2.x doesnt have support for ALTER TABLE, I've
+          left the ID column there for now.
+
 0.07  Thu Jun 5  11:56:00 2008
         - Moved database-dependant operations into their own class.
         - Updated build process to work with the latest and greatest

@@ -7,6 +7,7 @@ use Test::More;
 use Test::MigrationTest;
 use DBIx::Transaction;
 use DBIx::Migration::Directories;
+use Data::Dumper;
 
 our($driver, $migration, $sth, $dbh, $rv, $row, $rows, @sql, $log);
 
@@ -29,11 +30,14 @@ my @tests = (
     },
     sub {
         $dbh->begin_work;
-        $sth = $dbh->prepare("SELECT * FROM migration_schema_log");
+        $sth = $dbh->prepare(q{
+          SELECT * FROM migration_schema_log ORDER BY event_time, new_version
+        });
         $sth->execute();
-        $rows = $sth->fetchall_hashref('id');
-        is(scalar keys %$rows, 2, "$driver driver: Rows in log table");
-        $row = (values %$rows)[1];
+        $rows = $sth->fetchall_arrayref({});
+        diag(Data::Dumper->Dump([$rows]));
+        is(scalar @$rows, 3, "$driver driver: Rows in log table");
+        $row = $rows->[2];
         $sth->finish();
         $dbh->commit;
     },
@@ -45,25 +49,25 @@ my @tests = (
         );
     },
     sub {
-        ok($row->{old_version} == 0.01, "$driver driver: Correct old version");
+        is($row->{old_version} + 0, 0.02, "$driver driver: Correct old version");
     },
     sub {
-        ok(
-            $row->{new_version} == $DBIx::Migration::Directories::SCHEMA_VERSION,
+        is(
+            $row->{new_version} + 0, $DBIx::Migration::Directories::SCHEMA_VERSION,
             "$driver driver: Correct new version"
         );
     },
     sub {
         $log = $migration->schema_version_log;
-        is(scalar @$log, 2, "$driver driver: schema_version_log has two entries for us.");
-        $row = $log->[1];
+        is(scalar @$log, 3, "$driver driver: schema_version_log has three entries for us.");
+        $row = $log->[2];
     },
     sub {
-        ok($row->{old_version} == 0.01, "$driver driver: Correct old version");
+        is($row->{old_version} + 0, 0.02, "$driver driver: Correct old version");
     },
     sub {
-        ok(
-            $row->{new_version} == $DBIx::Migration::Directories::SCHEMA_VERSION,
+        is(
+            $row->{new_version} + 0, $DBIx::Migration::Directories::SCHEMA_VERSION,
             "$driver driver: Correct new version"
         );
     },

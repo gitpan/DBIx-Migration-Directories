@@ -114,7 +114,7 @@ sub db_schema_version_log {
      WHERE
        schema_name = ?
      ORDER BY
-       id
+       event_time, new_version
     })) {
       if($sth->execute($schema)) {
         if(my $result = $sth->fetchall_arrayref({})) {

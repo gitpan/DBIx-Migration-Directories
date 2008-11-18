@@ -4,3 +4,4 @@ CREATE TABLE migration_schema_version (
 );
 
 CREATE UNIQUE INDEX migration_schema_version_pkey ON migration_schema_version (name);
+

@@ -12,3 +12,4 @@ CREATE TABLE migration_schema_log (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 ) TYPE=InnoDB;
+

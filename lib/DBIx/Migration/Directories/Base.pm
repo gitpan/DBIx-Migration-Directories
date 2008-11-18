@@ -236,10 +236,6 @@ key/value pairs:
 
 =over
 
-=item id
-
-A unique integer identifier for this log entry.
-
 =item schema_name
 
 Schema this log entry refers to.
