@@ -40,13 +40,19 @@ if(open(my $fh, '>', $tf)) {
     print $fh "test\n";
     close($fh);
     chmod(0000, $tf);
-    eval { $m->dir_sql('001'); };
+
+    SKIP: {
+      if(open(my $fh2, '<', $tf)) {
+        skip 'root has access to everything', 1;
+      }
+
+      eval { $m->dir_sql('001'); };
     
-    like($@, qr/^open\(".+?"\) failed:/, 'bad file in directory');
+      like($@, qr/^open\(".+?"\) failed:/, 'bad file in directory');
+    }
     
     chmod(0700, $tf);
-    unlink($tf);
-    
+    unlink($tf);    
 } else {
     fail('open test file');
     fail('bad file in directory');
@@ -71,3 +77,5 @@ $m->{current_version} = 1;
 $m->{_current_version} = undef;
 @sql = $m->version_update_sql(1, 2);
 like($sql[0], qr/^\s*INSERT /, 'version_update: _current_version of undef overrides current_version');
+
+

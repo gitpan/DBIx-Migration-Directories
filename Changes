@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.09  Wed Feb 11 10:30:00 2009
+        - Skip file-permission-based tests when running as root, since
+          root has access to everything...
+
 0.08  Tue Nov 18 11:17:00 2008
         - Got rid of "id" column in the migration_schema_log
           This means that the log no longer has a primary id -- this also

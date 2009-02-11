@@ -140,21 +140,32 @@ like($@,
     'Initialize new object with bad current_version'
 );
 
-mkdir('bogus-dir', 0000);
+SKIP: {
+  mkdir('bogus-dir', 0000) or die $!;
 
-eval {
-    $mh = $mh->new(
-        dbh                     =>      $dbh,
-        dir                     =>      'bogus-dir',
-        schema                  =>      'TestSchema',
-        current_version         =>      -1,
-    );
-};
+  if(opendir(my $dir, 'bogus-dir')) {
+    closedir $dir;
+    chmod(0700, 'bogus-dir');
+    rmdir('bogus-dir');
 
-like($@,
-    qr/^opendir\("bogus-dir"\) failed:/,
-    'Initialize with directory we dont have access to'
-);
+    skip "root can write to everything", 1;
+  }
 
-chmod(0700, 'bogus-dir');
-rmdir('bogus-dir');
+  eval {
+      $mh = $mh->new(
+          dbh                     =>      $dbh,
+          dir                     =>      'bogus-dir',
+          schema                  =>      'TestSchema',
+          current_version         =>      -1,
+      );
+  };
+
+  like($@,
+      qr/^opendir\("bogus-dir"\) failed:/,
+      'Initialize with directory we dont have access to'
+  );
+
+  chmod(0700, 'bogus-dir');
+  rmdir('bogus-dir');
+}
+
