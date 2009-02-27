@@ -1,5 +1,13 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.10  Fri Feb 27 11:32:00 2009
+        - Added "--force-current-version" flag to migrate-database-schema.
+          Why? Because when a MySQL migration fails halfway though, the DDL
+          is already committed, but we can't increment the version number
+          in the database because, well, we failed.
+          So the only sane way to roll back is to say
+          "--force-current-version=new.version --desired-version=old.version"
+
 0.09  Wed Feb 11 10:30:00 2009
         - Skip file-permission-based tests when running as root, since
           root has access to everything...

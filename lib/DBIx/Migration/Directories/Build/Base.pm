@@ -4,6 +4,7 @@ package DBIx::Migration::Directories::Build::Base;
 
 use strict;
 use warnings;
+use Module::Build;
 use base q(Module::Build);
 use File::Spec;
 use File::Path;

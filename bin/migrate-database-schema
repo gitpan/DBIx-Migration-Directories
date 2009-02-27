@@ -25,6 +25,7 @@ GetOptions(
     'full',
     'info',
     'desired-version|t=f',
+    'force-current-version=f',
     'verbose|v',
     'help|h',
 );
@@ -127,6 +128,11 @@ eval {
                         (desired_version =>  $args{'desired-version'})
                         : ()
                 ),
+                (
+                    defined($args{'force-current-version'}) ?
+                        (current_version => $args{'force-current-version'})
+                        : ()
+                )
             ) or die "Failed to get a migration handle!\n";
         }
                     
@@ -230,7 +236,7 @@ migrate-database-schema - Install, remove, upgrade, or downgrade a schema
   migrate-database-schema
     --dsn=DBI:string [--user=username] [--pass=password]
     [--desired-version=version|--info|--delete [--full]]
-    [--dir=/path/to/schema/files]
+    [--dir=/path/to/schema/files] [--force-current-version=version]
     schema [schema [schema ... ]]
 
 =head1 DESCRIPTION
@@ -284,6 +290,16 @@ schema if no other schemas are using it.
 Instead of attempting to upgrade to the latest version, upgrade (or downgrade)
 us to the specified version.
 
+=item --force-current-version=number
+
+Ignore what the database says, assume the current schema version is
+I<number>. This is mostly useful with MySQL databases, since they are
+incapable of rolling back DDL changes if a migration fails. If this happens
+in MySQL and you need to "roll back", make sure you have a well-written
+backwards migration (eg; "DROP TABLE IF EXISTS" instead of "DROP TABLE")
+and use the arguments,
+"--force-current-version=[new.version] --desired-version=[old.version]"
+
 =item --verbose
 
 Explain our actions as we take them.
@@ -299,3 +315,4 @@ Display usage synopsis and exit.
 L<DBIx::Migration::Directories>, L<DBI>
 
 =cut
+
