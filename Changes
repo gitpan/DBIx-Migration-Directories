@@ -1,5 +1,12 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.11  Thu Aug 20 11:06:00 2009
+        - Don't consider files that end with a tilde (~) to be schema
+          files. (This extension is commonly chosen as a 'backup' file
+          by editors such as joe, gedit, etc)
+        - Added some (very basic) documentation to
+          DBIx::Migration::Directories::Test
+
 0.10  Fri Feb 27 11:32:00 2009
         - Added "--force-current-version" flag to migrate-database-schema.
           Why? Because when a MySQL migration fails halfway though, the DDL

@@ -1,12 +1,10 @@
 ---
 name: DBIx-Migration-Directories
-version: 0.10
+version: 0.11
 author:
   - 'Tyler "Crackerjack" MacDonald <japh@crackerjack.net>'
 abstract: Install/remove/upgrade/downgrade SQL schemas
 license: perl
-resources:
-  license: http://dev.perl.org/licenses/
 requires:
   DBI: 1.41
   DBIx::Transaction: 0.005
@@ -15,10 +13,14 @@ requires:
 build_requires:
   Data::Dumper: 2.10
   Module::Build: 0.27_03
+generated_by: Module::Build version 0.280801
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
 provides:
   DBIx::Migration::Directories:
     file: lib/DBIx/Migration/Directories.pm
-    version: 0.10
+    version: 0.11
   DBIx::Migration::Directories::Base:
     file: lib/DBIx/Migration/Directories/Base.pm
   DBIx::Migration::Directories::Build:
@@ -33,7 +35,5 @@ provides:
     file: lib/DBIx/Migration/Directories/Database/mysql.pm
   DBIx::Migration::Directories::Test:
     file: lib/DBIx/Migration/Directories/Test.pm
-generated_by: Module::Build version 0.3
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
+resources:
+  license: http://dev.perl.org/licenses/

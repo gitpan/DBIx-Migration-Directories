@@ -9,7 +9,7 @@ use base q(DBIx::Migration::Directories::Base);
 use DBIx::Migration::Directories::ConfigData;
 use File::Basename::Object;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 our $SCHEMA_VERSION = '0.03';
 our $schema = 'DBIx-Migration-Directories';
 
@@ -278,7 +278,7 @@ sub ls_overlay {
 sub ls {
     my($self, $dn) = @_;
     map { File::Basename::Object->new($_) }
-        sort map { "$dn/$_" } grep { !/^\./ && -f "$dn/$_" } readdir do {
+        sort map { "$dn/$_" } grep { !/^\./ && !/\~$/ && -f "$dn/$_" } readdir do {
             my $d; opendir($d, $dn) ? $d : croak qq{opendir("$dn") failed: $!};
         };
 }

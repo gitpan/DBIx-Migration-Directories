@@ -304,7 +304,7 @@ Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 =head1 LICENSE
 
-Copyright 2008 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+Copyright 2009 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
 
 This is free software; You may distribute it under the same terms as perl
 itself.
@@ -315,4 +315,4 @@ L<DBIx::Migration::Directories>
 
 =cut
 
-=cut
+
