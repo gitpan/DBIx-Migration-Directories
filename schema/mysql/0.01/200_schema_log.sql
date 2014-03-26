@@ -11,5 +11,5 @@ CREATE TABLE migration_schema_log (
         REFERENCES  migration_schema_version (name)
         ON UPDATE CASCADE
         ON DELETE CASCADE
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 

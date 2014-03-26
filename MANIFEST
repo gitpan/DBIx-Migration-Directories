@@ -33,7 +33,6 @@ schema/SQLite2/0.01/200_schema_log.sql
 schema/SQLite2/0.02-0.03/100_drop_id.sql
 schema/SQLite2/0.03-0.02/100_dummy.sql
 t/01_class.t
-t/02_Build_PL.t.disabled
 t/03_config_data.t
 t/05_migration_path.t
 t/10_dir_sql.t
@@ -59,3 +58,4 @@ t/tetc/TestSchema2/001/01_foo.sql
 t/tlib/Test/DummyDBI.pm
 t/tlib/Test/MigrationTest.pm
 t/tlib/TestSchema.pm
+META.json

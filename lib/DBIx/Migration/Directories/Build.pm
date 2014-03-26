@@ -34,6 +34,10 @@ sub new {
             'site', 'schemas', 'share/schemas'
         );
 
+        if($schema_dir eq '/share/schemas') {
+            $schema_dir = '/usr/share/schemas';
+        }
+
         $schema_dir = $self->prompt(
             "Where should database schemas be installed?", $schema_dir
         );

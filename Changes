@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::Migration::Directories.
 
+0.12  Mon Mar 18 11:24:05 2013
+        - Use "ENGINE=InnoDB" instead of "TYPE=InnoDB" when creating
+          MySQL tables (RT#83954, Vita Cizek)
+
 0.11  Thu Aug 20 11:06:00 2009
         - Don't consider files that end with a tilde (~) to be schema
           files. (This extension is commonly chosen as a 'backup' file
